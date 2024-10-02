@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مواقيت الصـلاة</title>
+    <!-- APPLICATION FAVICON -->
+    <link rel="shortcut icon" href="imgs/avatar.ico" type="image/x-icon" />
+    <!-- BOOTSTRAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+    />
+    <!-- AXIOS LIBRARY -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1 class="text-center pt-5">مواقيت الصلاة</h1>
+      <section id="selection" class="row justify-content-center">
+        <header class="col col-md-6">
+          <div class="w-100">
+            <label for="country" class="form-label">برجاء إختيار الدولة:</label
+            ><br />
+            <select id="country" class="w-100">
+              <option value="none">برجاء إختيار الدولة</option>
+              <!-- <option value="eg">مصر</option>
+              <option value="ksa">السعودية</option> -->
+            </select>
+          </div>
+          <div class="w-100">
+            <label for="location" class="form-label"
+              >برجاء إختيار المنطقة:</label
+            ><br />
+            <select id="location" class="w-100" disabled>
+              <option value="">توقيت المنوفية : تلقائي</option>
+              <!-- <option value="menofia">المنوفية</option>
+              <option value="cairo">القاهرة</option> -->
+            </select>
+          </div>
+        </header>
+      </section>
+      <section id="prayer-section" class="row justify-content-center">
+        <table class="col col-md-6 text-center">
+          <thead>
+            <tr>
+              <th scope="col">الصــــــــــلاة</th>
+              <th scope="col">الوقــــــــــت</th>
+            </tr>
+          </thead>
+          <tbody id="prayers">
+            <!-- <tr>
+              <td>الفجر</td>
+              <td>02:22</td>
+            </tr>
+            <tr>
+              <td>الظهر</td>
+              <td>01:00</td>
+            </tr>
+            <tr>
+              <td>العصر</td>
+              <td>03:30</td>
+            </tr>
+            <tr>
+              <td>العصر</td>
+              <td>03:30</td>
+            </tr>
+            <tr>
+              <td>العصر</td>
+              <td>03:30</td>
+            </tr>
+            <tr>
+              <td>العصر</td>
+              <td>03:30</td>
+            </tr> -->
+          </tbody>
+        </table>
+      </section>
+      <footer class="row justify-content-center">
+        <div class="col col-md-6 d-flex justify-content-between" id="footer">
+          <h1>
+            تم تنفيذ التطبيق بواسطة <span id="author">محمــود مــاهر</span>
+          </h1>
+          <h1>تاريخ اليوم <span id="date">02/10/2024</span></h1>
+        </div>
+      </footer>
+    </main>
+  </body>
+  <script src="script.js"></script>
+</html>

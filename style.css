@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-image: url("imgs/background.jpg");
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  backdrop-filter: blur(5px);
+  direction: rtl;
+}
+body::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: #5f7e78;
+  position: absolute;
+  opacity: 0.7;
+  z-index: -1;
+}
+main h1{
+  color: #f1ead7;
+}
+main section#selection {
+  padding-top: 20px;
+}
+main section#selection header {
+  background-color: #e3a53e;
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+main section#selection header select {
+  flex-basis: 50%;
+  border-radius: 10px;
+  padding: 10px;
+}
+main section#prayer-section table {
+  border-collapse: collapse;
+  background-color: #00000043;
+  backdrop-filter: blur(5px);
+  color: #e3a53e;
+}
+
+main section#prayer-section table th {
+  padding: 10px 0;
+  color: #f1ead7;
+}
+main section#prayer-section table td {
+  padding: 5px 0;
+}
+main section#prayer-section table td:first-child {
+  color: #d4be83;
+  font-weight: bold;
+}
+main section#prayer-section table tr:last-child td {
+  padding: 5px 0 10px;
+}
+main footer #footer {
+  background-color: #e3a53e;
+  border-radius: 0 0 20px 20px;
+}
+main footer #footer h1 {
+  font-size: 20px;
+  text-align: center;
+  color: #5f7e78;
+  padding: 15px;
+  line-height: 1.4;
+}
+main footer #footer h1 span {
+  color: #f1ead7;
+  line-height: 1;
+}
+@media (max-width: 767px) {
+  /* body{
+    background-position: top;
+  } */
+main{
+  padding: 0 20px !important;
+}
+main section#prayer-section table th,main section#prayer-section table td{
+  font-size: larger;
+}
+main footer #footer h1 span{
+  display: block;
+}
+}
