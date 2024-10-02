@@ -15,7 +15,7 @@ body {
   padding: 0;
   margin: 0;
   position: relative;
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(0px);
   direction: rtl;
 }
 body::before {
