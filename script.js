@@ -23,7 +23,7 @@ let countries = [
   },
   {
     name: "السعودية",
-    key: "KSA",
+    key: "SA",
     gov: [
       {
         name: "مكة",
@@ -45,9 +45,9 @@ let countries = [
   },
 ];
 
-document.addEventListener("DOMContentLoaded",function () {
+document.addEventListener("DOMContentLoaded", function () {
   getPrayers("EG", "Monufia");
-})
+});
 
 let countryInput = document.getElementById("country");
 for (const country of countries) {
@@ -95,30 +95,31 @@ function getPrayers(country, location) {
     )
     .then((response) => {
       // console.log(response.data.data.timings);
+      let timings = response.data.data.timings;
       let markup = `
             <tr>
               <td>الفجر</td>
-              <td>${response.data.data.timings.Fajr}</td>
+              <td>${timings.Fajr}</td>
             </tr>
             <tr>
               <td>الشروق</td>
-              <td>${response.data.data.timings.Sunrise}</td>
+              <td>${timings.Sunrise}</td>
             </tr>
             <tr>
               <td>الظهر</td>
-              <td>${response.data.data.timings.Dhuhr}</td>
+              <td>${timings.Dhuhr}</td>
             </tr>
             <tr>
               <td>العصر</td>
-              <td>${response.data.data.timings.Asr}</td>
+              <td>${timings.Asr}</td>
             </tr>
             <tr>
               <td>المغرب</td>
-              <td>${response.data.data.timings.Maghrib}</td>
+              <td>${timings.Maghrib}</td>
             </tr>
             <tr>
               <td>العشاء</td>
-              <td>${response.data.data.timings.Isha}</td>
+              <td>${timings.Isha}</td>
             </tr>
             
             `;
