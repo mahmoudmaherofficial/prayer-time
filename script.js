@@ -1,51 +1,3 @@
-// Declaring countries & Locations
-let countries = [
-  {
-    name: "مصر",
-    key: "EG",
-    locations: [
-      {
-        name: "المنوفية",
-        key: "Monufia",
-      },
-      {
-        name: "القاهرة",
-        key: "Cairo",
-      },
-      {
-        name: "الجيزة",
-        key: "Giza",
-      },
-      {
-        name: "الإسكندرية",
-        key: "Alexandria",
-      },
-    ],
-  },
-  {
-    name: "السعودية",
-    key: "SA",
-    locations: [
-      {
-        name: "مكة",
-        key: "Mecca",
-      },
-      {
-        name: "المدينة",
-        key: "Madinah",
-      },
-      {
-        name: "الرياض",
-        key: "Riyadh",
-      },
-      {
-        name: "جدة",
-        key: "Jeddah",
-      },
-    ],
-  },
-];
-
 // Making "Monufia" as the default location
 document.addEventListener("DOMContentLoaded", function () {
   getPrayers("EG", "Monufia");
@@ -76,8 +28,9 @@ countryInput.addEventListener("change", function () {
     locationsInput.removeAttribute("disabled");
     getPrayers(countryInput.value, locationsInput.value);
   } else {
-    locationsInput.innerHTML = "";
+    locationsInput.innerHTML = `<option value="">توقيت المنوفية : تلقائي</option>`;
     locationsInput.setAttribute("disabled", "disabled");
+    getPrayers("EG", "Monufia");
   }
 });
 
@@ -85,7 +38,6 @@ countryInput.addEventListener("change", function () {
 locationsInput.addEventListener("change", function () {
   getPrayers(countryInput.value, locationsInput.value);
 });
-
 
 // ==================== FUNCTIONS ==================== //
 
