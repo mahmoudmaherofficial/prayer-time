@@ -1,8 +1,9 @@
+// Declaring countries & Locations
 let countries = [
   {
     name: "مصر",
     key: "EG",
-    gov: [
+    locations: [
       {
         name: "المنوفية",
         key: "Monufia",
@@ -24,7 +25,7 @@ let countries = [
   {
     name: "السعودية",
     key: "SA",
-    gov: [
+    locations: [
       {
         name: "مكة",
         key: "Mecca",
@@ -45,56 +46,65 @@ let countries = [
   },
 ];
 
+// Making "Monufia" as the default location
 document.addEventListener("DOMContentLoaded", function () {
   getPrayers("EG", "Monufia");
 });
 
+// Filling the dropdown list with countries
 let countryInput = document.getElementById("country");
 for (const country of countries) {
   countryInput.innerHTML += `
     <option value="${country.key}">${country.name}</option>
   `;
 }
-let govInput = document.getElementById("location");
+
+// filling dropdown list with locations of selected country
+let locationsInput = document.getElementById("location");
 countryInput.addEventListener("change", function () {
   for (const country of countries) {
     if (country.key === this.value) {
-      govInput.innerHTML = "";
-      for (const gov of country.gov) {
-        govInput.innerHTML += `
-      <option value="${gov.key}">${gov.name}</option>
+      locationsInput.innerHTML = "";
+      for (const locations of country.locations) {
+        locationsInput.innerHTML += `
+      <option value="${locations.key}">${locations.name}</option>
     `;
       }
     }
   }
   if (countryInput.value != "none") {
-    govInput.removeAttribute("disabled");
-    getPrayers(countryInput.value, govInput.value);
+    locationsInput.removeAttribute("disabled");
+    getPrayers(countryInput.value, locationsInput.value);
   } else {
-    govInput.innerHTML = "";
-    govInput.setAttribute("disabled", "disabled");
+    locationsInput.innerHTML = "";
+    locationsInput.setAttribute("disabled", "disabled");
   }
 });
-govInput.addEventListener("change", function () {
-  getPrayers(countryInput.value, govInput.value);
+
+// changing timings based on selected location
+locationsInput.addEventListener("change", function () {
+  getPrayers(countryInput.value, locationsInput.value);
 });
 
+
+// ==================== FUNCTIONS ==================== //
+
+// GET DATE FUNCTION
 let currentDate = document.getElementById("date");
 let date = new Date();
-currentDate.innerHTML = `${date.getDate()}-${
+let finalDate = `${date.getDate()}-${
   date.getMonth() + 1
 }-${date.getFullYear()}`;
+currentDate.innerHTML = finalDate;
 
+// GET PRAYERS FUNCTION
 let prayers = document.getElementById("prayers");
 function getPrayers(country, location) {
   axios
     .get(
-      `https://api.aladhan.com/v1/timingsByCity/date=${date.getDate()}-${
-        date.getMonth() + 1
-      }-${date.getFullYear()}?city=${location}&country=${country}`
+      `https://api.aladhan.com/v1/timingsByCity/date=${finalDate}?city=${location}&country=${country}`
     )
     .then((response) => {
-      // console.log(response.data.data.timings);
       let timings = response.data.data.timings;
       let markup = `
             <tr>
@@ -121,8 +131,7 @@ function getPrayers(country, location) {
               <td>العشاء</td>
               <td>${timings.Isha}</td>
             </tr>
-            
-            `;
+          `;
       prayers.innerHTML = markup;
     });
 }
