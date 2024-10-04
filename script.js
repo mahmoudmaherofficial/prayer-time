@@ -24,9 +24,9 @@ countryInput.addEventListener("change", function () {
       }
     }
   }
-  if (countryInput.value != "none") {
+  if (this.value != "none") {
     citiesInput.removeAttribute("disabled");
-    getPrayers(countryInput.value, citiesInput.value);
+    getPrayers(this.value, citiesInput.value);
   } else {
     citiesInput.innerHTML = `<option value="">توقيت المنوفية : تلقائي</option>`;
     citiesInput.setAttribute("disabled", "disabled");
@@ -36,7 +36,7 @@ countryInput.addEventListener("change", function () {
 
 // changing timings based on selected location
 citiesInput.addEventListener("change", function () {
-  getPrayers(countryInput.value, citiesInput.value);
+  getPrayers(countryInput.value, this.value);
 });
 
 // ==================== FUNCTIONS ==================== //
