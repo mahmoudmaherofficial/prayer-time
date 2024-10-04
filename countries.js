@@ -1,9 +1,9 @@
-// Declaring countries & Locations
+// Declaring countries & cities
 let oldCountries = [
   {
     name: "مصر",
     key: "EG",
-    locations: [
+    cities: [
       {
         name: "المنوفية",
         key: "Monufia",
@@ -25,7 +25,7 @@ let oldCountries = [
   {
     name: "السعودية",
     key: "SA",
-    locations: [
+    cities: [
       {
         name: "مكة",
         key: "Mecca",
@@ -50,7 +50,7 @@ let countries = [
   {
     name: "مصر",
     key: "EG",
-    locations: [
+    cities: [
       {
         name: "المنوفية",
         key: "Monufia",
@@ -72,7 +72,7 @@ let countries = [
   {
     name: "السعودية",
     key: "SA",
-    locations: [
+    cities: [
       {
         name: "مكة",
         key: "Mecca",
@@ -94,7 +94,7 @@ let countries = [
   {
     name: "أفغانستان",
     key: "AF",
-    locations: [
+    cities: [
       { name: "كابول", key: "Kabul" },
       { name: "هرات", key: "Herat" },
       { name: "قندهار", key: "Kandahar" },
@@ -105,7 +105,7 @@ let countries = [
   {
     name: "ألبانيا",
     key: "AL",
-    locations: [
+    cities: [
       { name: "تيرانا", key: "Tirana" },
       { name: "دورس", key: "Durres" },
       { name: "فلوره", key: "Vlore" },
@@ -116,7 +116,7 @@ let countries = [
   {
     name: "الجزائر",
     key: "DZ",
-    locations: [
+    cities: [
       { name: "الجزائر العاصمة", key: "Algiers" },
       { name: "وهران", key: "Oran" },
       { name: "قسنطينة", key: "Constantine" },
@@ -127,12 +127,12 @@ let countries = [
   {
     name: "أندورا",
     key: "AD",
-    locations: [{ name: "أندورا لا فيلا", key: "Andorra la Vella" }],
+    cities: [{ name: "أندورا لا فيلا", key: "Andorra la Vella" }],
   },
   {
     name: "أنغولا",
     key: "AO",
-    locations: [
+    cities: [
       { name: "لواندا", key: "Luanda" },
       { name: "هوانبو", key: "Huambo" },
       { name: "مبيندا", key: "Lubango" },
@@ -142,12 +142,12 @@ let countries = [
   {
     name: "أنتيغوا وبربودا",
     key: "AG",
-    locations: [{ name: "سانت جونز", key: "St. John's" }],
+    cities: [{ name: "سانت جونز", key: "St. John's" }],
   },
   {
     name: "الأرجنتين",
     key: "AR",
-    locations: [
+    cities: [
       { name: "بوينس آيرس", key: "Buenos Aires" },
       { name: "كوردوبا", key: "Córdoba" },
       { name: "روزاريو", key: "Rosario" },
@@ -157,7 +157,7 @@ let countries = [
   {
     name: "أرمينيا",
     key: "AM",
-    locations: [
+    cities: [
       { name: "يريفان", key: "Yerevan" },
       { name: "غغاركونيك", key: "Gegharkunik" },
       { name: "شيراز", key: "Shirak" },
@@ -166,7 +166,7 @@ let countries = [
   {
     name: "أستراليا",
     key: "AU",
-    locations: [
+    cities: [
       { name: "كانبرا", key: "Canberra" },
       { name: "سيدني", key: "Sydney" },
       { name: "ميلبورن", key: "Melbourne" },
@@ -177,7 +177,7 @@ let countries = [
   {
     name: "النمسا",
     key: "AT",
-    locations: [
+    cities: [
       { name: "فيينا", key: "Vienna" },
       { name: "سالزبورغ", key: "Salzburg" },
       { name: "غراتس", key: "Graz" },
@@ -187,12 +187,12 @@ let countries = [
   {
     name: "إمبراطورية النمسا",
     key: "AT-Empire",
-    locations: [], // Fill with historical locations if needed
+    cities: [], // Fill with historical cities if needed
   },
   {
     name: "أذربيجان",
     key: "AZ",
-    locations: [
+    cities: [
       { name: "باكو", key: "Baku" },
       { name: "غنجة", key: "Ganja" },
       { name: "لنكوران", key: "Lankaran" },
@@ -202,7 +202,7 @@ let countries = [
   {
     name: "الولايات المتحدة الأمريكية",
     key: "US",
-    locations: [
+    cities: [
       { name: "واشنطن", key: "Washington" },
       { name: "نيويورك", key: "New York" },
       { name: "لوس أنجلوس", key: "Los Angeles" },
@@ -213,7 +213,7 @@ let countries = [
   {
     name: "اليمن",
     key: "YE",
-    locations: [
+    cities: [
       { name: "صنعاء", key: "Sana'a" },
       { name: "عدن", key: "Aden" },
       { name: "تعز", key: "Taiz" },
@@ -223,7 +223,7 @@ let countries = [
   {
     name: "زامبيا",
     key: "ZM",
-    locations: [
+    cities: [
       { name: "لوساكا", key: "Lusaka" },
       { name: "كابوي", key: "Kabwe" },
     ],
@@ -231,7 +231,7 @@ let countries = [
   {
     name: "زمبابوي",
     key: "ZW",
-    locations: [
+    cities: [
       { name: "هراري", key: "Harare" },
       { name: "بولاوايو", key: "Bulawayo" },
     ],

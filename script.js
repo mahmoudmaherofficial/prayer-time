@@ -11,32 +11,32 @@ for (const country of countries) {
   `;
 }
 
-// filling dropdown list with locations of selected country
-let locationsInput = document.getElementById("location");
+// filling dropdown list with cities of selected country
+let citiesInput = document.getElementById("location");
 countryInput.addEventListener("change", function () {
   for (const country of countries) {
     if (country.key === this.value) {
-      locationsInput.innerHTML = "";
-      for (const locations of country.locations) {
-        locationsInput.innerHTML += `
-      <option value="${locations.key}">${locations.name}</option>
+      citiesInput.innerHTML = "";
+      for (const cities of country.cities) {
+        citiesInput.innerHTML += `
+      <option value="${cities.key}">${cities.name}</option>
     `;
       }
     }
   }
   if (countryInput.value != "none") {
-    locationsInput.removeAttribute("disabled");
-    getPrayers(countryInput.value, locationsInput.value);
+    citiesInput.removeAttribute("disabled");
+    getPrayers(countryInput.value, citiesInput.value);
   } else {
-    locationsInput.innerHTML = `<option value="">توقيت المنوفية : تلقائي</option>`;
-    locationsInput.setAttribute("disabled", "disabled");
+    citiesInput.innerHTML = `<option value="">توقيت المنوفية : تلقائي</option>`;
+    citiesInput.setAttribute("disabled", "disabled");
     getPrayers("EG", "Monufia");
   }
 });
 
 // changing timings based on selected location
-locationsInput.addEventListener("change", function () {
-  getPrayers(countryInput.value, locationsInput.value);
+citiesInput.addEventListener("change", function () {
+  getPrayers(countryInput.value, citiesInput.value);
 });
 
 // ==================== FUNCTIONS ==================== //
