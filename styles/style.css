@@ -437,9 +437,16 @@ body::before {
   font-size: 0.98rem;
 }
 
-.app-footer span {
+.app-footer #author {
   color: var(--brand-deep);
   font-weight: 800;
+  text-decoration: none;
+}
+
+.app-footer #author:hover,
+.app-footer #author:focus-visible {
+  color: var(--brand-deep);
+  text-decoration: none;
 }
 
 @keyframes shimmer {
@@ -495,17 +502,14 @@ body::before {
     font-size: 2rem;
   }
 
-  .prayer-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .prayer-main {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 
   .prayer-time {
+    flex-shrink: 0;
     text-align: left;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 }
