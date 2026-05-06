@@ -250,6 +250,7 @@ body::before {
 
 .prayer-list {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 0.9rem;
 }
 
@@ -413,6 +414,12 @@ body::before {
 
   to {
     background-position: -200% 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .prayer-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
