@@ -3,17 +3,6 @@ const defaultSelection = {
   city: "Monufia",
 };
 
-const countriesDataPath = "/assets/data/countries.json";
-
-const prayerConfig = [
-  { key: "Fajr", label: "الفجر", note: "بداية اليوم" },
-  { key: "Sunrise", label: "الشروق", note: "شروق الشمس" },
-  { key: "Dhuhr", label: "الظهر", note: "منتصف النهار" },
-  { key: "Asr", label: "العصر", note: "آخر النهار" },
-  { key: "Maghrib", label: "المغرب", note: "وقت الإفطار" },
-  { key: "Isha", label: "العشاء", note: "ختام اليوم" },
-];
-
 const countryInput = document.getElementById("country");
 const cityInput = document.getElementById("location");
 const prayersContainer = document.getElementById("prayers");
@@ -23,12 +12,13 @@ const statusMessageElement = document.getElementById("status-message");
 const selectedCountryLabel = document.getElementById("selected-country-label");
 const selectedCityLabel = document.getElementById("selected-city-label");
 const nextPrayerLabel = document.getElementById("next-prayer-label");
+
 let countries = [];
+let locationPrayerQueryMap = new Map();
+let latestRequestId = 0;
 
 const today = new Date();
-const apiDate = `${String(today.getDate()).padStart(2, "0")}-${String(
-  today.getMonth() + 1
-).padStart(2, "0")}-${today.getFullYear()}`;
+const apiDate = PrayerService.buildApiDate(today);
 
 const appState = {
   selectedCountry: defaultSelection.country,
@@ -45,8 +35,6 @@ const appState = {
   hijriDate: "--",
 };
 
-let latestRequestId = 0;
-
 document.addEventListener("DOMContentLoaded", async () => {
   updateHeaderDates();
   renderSelectionSummary();
@@ -54,13 +42,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeApp();
 });
 
-countryInput.addEventListener("change", () => {
+countryInput.addEventListener("change", handleCountryChange);
+cityInput.addEventListener("change", handleCityChange);
+prayersContainer.addEventListener("click", handleRetryClick);
+
+async function initializeApp() {
+  try {
+    countries = await GeoService.loadCountries();
+    populateCountries();
+    syncLocationOptions(appState.selectedCountry, appState.selectedCity);
+    getPrayers(appState.selectedCountry, appState.selectedCity);
+  } catch (error) {
+    handleLocationLoadFailure();
+  }
+}
+
+function handleCountryChange() {
   appState.selectedCountry = countryInput.value;
 
   if (!appState.selectedCountry) {
-    cityInput.innerHTML = "";
-    cityInput.setAttribute("disabled", "disabled");
-    appState.selectedCity = "";
+    resetLocationSelection();
     appState.prayers = [];
     appState.errorMessage = "";
     updateStatusMessage("اختر دولة أولاً ثم حدد المنطقة لعرض المواقيت.");
@@ -71,76 +72,79 @@ countryInput.addEventListener("change", () => {
 
   syncLocationOptions(appState.selectedCountry);
   getPrayers(appState.selectedCountry, appState.selectedCity);
-});
+}
 
-cityInput.addEventListener("change", () => {
+function handleCityChange() {
   appState.selectedCity = cityInput.value;
   renderSelectionSummary();
   getPrayers(appState.selectedCountry, appState.selectedCity);
-});
+}
 
-prayersContainer.addEventListener("click", (event) => {
+function handleRetryClick(event) {
   if (event.target.id === "retry-fetch") {
     getPrayers(appState.selectedCountry, appState.selectedCity);
   }
-});
-
-async function initializeApp() {
-  try {
-    countries = await loadCountries();
-    populateCountries();
-    syncLocationOptions(appState.selectedCountry, appState.selectedCity);
-    getPrayers(appState.selectedCountry, appState.selectedCity);
-  } catch (error) {
-    countries = [];
-    countryInput.innerHTML = `<option value="">تعذر تحميل الدول</option>`;
-    cityInput.innerHTML = `<option value="">تعذر تحميل المناطق</option>`;
-    countryInput.setAttribute("disabled", "disabled");
-    cityInput.setAttribute("disabled", "disabled");
-    appState.errorMessage = "تعذر تحميل قائمة الدول والمناطق من الملف المحلي.";
-    updateStatusMessage("تعذر تحميل قائمة الدول. تأكد من تشغيل التطبيق من خادم محلي والمحاولة مرة أخرى.");
-    renderSelectionSummary();
-    renderErrorState();
-  }
 }
 
-async function loadCountries() {
-  const response = await fetch(countriesDataPath);
-
-  if (!response.ok) {
-    throw new Error(`Failed to load countries: ${response.status}`);
-  }
-
-  return response.json();
+function handleLocationLoadFailure() {
+  countries = [];
+  locationPrayerQueryMap = new Map();
+  countryInput.innerHTML = `<option value="">تعذر تحميل الدول</option>`;
+  cityInput.innerHTML = `<option value="">تعذر تحميل المناطق</option>`;
+  countryInput.setAttribute("disabled", "disabled");
+  cityInput.setAttribute("disabled", "disabled");
+  appState.errorMessage = "تعذر تحميل قائمة الدول والمناطق من الخدمة الخارجية.";
+  updateStatusMessage(
+    "تعذر تحميل قائمة الدول من الخدمة الخارجية. يرجى المحاولة مرة أخرى بعد قليل.",
+  );
+  renderSelectionSummary();
+  renderErrorState();
 }
 
 function populateCountries() {
   const options = [
     `<option value="">اختر الدولة المناسبة</option>`,
     ...countries.map(
-      (country) =>
-        `<option value="${country.key}">${country.name}</option>`
+      (country) => `<option value="${country.key}">${country.name}</option>`,
     ),
   ];
 
   countryInput.innerHTML = options.join("");
   countryInput.value = appState.selectedCountry;
+  countryInput.removeAttribute("disabled");
 }
 
 function syncLocationOptions(countryKey, preferredCityKey) {
-  const selectedCountry = countries.find((country) => country.key === countryKey);
+  const selectedCountry = countries.find(
+    (country) => country.key === countryKey,
+  );
 
   if (!selectedCountry) {
-    cityInput.innerHTML = `<option value="">اختر المنطقة</option>`;
+    resetLocationSelection();
+    return;
+  }
+
+  if (!selectedCountry.cities.length) {
+    cityInput.innerHTML = `<option value="">لا توجد مناطق متاحة</option>`;
     cityInput.setAttribute("disabled", "disabled");
+    appState.selectedCity = "";
+    locationPrayerQueryMap = new Map();
+    renderSelectionSummary();
     return;
   }
 
   const targetCity =
-    preferredCityKey && selectedCountry.cities.some((city) => city.key === preferredCityKey)
+    preferredCityKey &&
+    selectedCountry.cities.some((city) => city.key === preferredCityKey)
       ? preferredCityKey
       : selectedCountry.cities[0].key;
 
+  locationPrayerQueryMap = new Map(
+    selectedCountry.cities.map((city) => [
+      city.key,
+      city.prayerQuery || city.key,
+    ]),
+  );
   cityInput.innerHTML = selectedCountry.cities
     .map((city) => `<option value="${city.key}">${city.name}</option>`)
     .join("");
@@ -150,14 +154,25 @@ function syncLocationOptions(countryKey, preferredCityKey) {
   renderSelectionSummary();
 }
 
+function resetLocationSelection() {
+  cityInput.innerHTML = `<option value="">اختر المنطقة</option>`;
+  cityInput.setAttribute("disabled", "disabled");
+  appState.selectedCity = "";
+  locationPrayerQueryMap = new Map();
+}
+
 function updateHeaderDates() {
   currentDateElement.textContent = appState.readableDate;
   currentHijriDateElement.textContent = appState.hijriDate;
 }
 
 function renderSelectionSummary() {
-  const country = countries.find((item) => item.key === appState.selectedCountry);
-  const city = country?.cities.find((item) => item.key === appState.selectedCity);
+  const country = countries.find(
+    (item) => item.key === appState.selectedCountry,
+  );
+  const city = country?.cities.find(
+    (item) => item.key === appState.selectedCity,
+  );
 
   selectedCountryLabel.textContent = country?.name || "لم يتم الاختيار بعد";
   selectedCityLabel.textContent = city?.name || "بانتظار تحديد المنطقة";
@@ -209,7 +224,7 @@ function renderPrayers() {
     return;
   }
 
-  const nextPrayer = getNextPrayer(appState.prayers);
+  const nextPrayer = PrayerService.getNextPrayer(appState.prayers);
   nextPrayerLabel.textContent = nextPrayer
     ? `${nextPrayer.label} - ${nextPrayer.time}`
     : "انتهت مواقيت اليوم";
@@ -247,32 +262,18 @@ function getPrayers(country, city) {
   updateStatusMessage("جارٍ تحديث المواقيت بناءً على اختيارك...");
   renderLoadingState();
 
-  axios
-    .get(`https://api.aladhan.com/v1/timingsByCity/${apiDate}`, {
-      params: {
-        city,
-        country,
-      },
-    })
-    .then((response) => {
+  PrayerService.fetchPrayerTimes(
+    apiDate,
+    country,
+    locationPrayerQueryMap.get(city) || city,
+  )
+    .then((result) => {
       if (requestId !== latestRequestId) {
         return;
       }
 
-      const timings = response.data?.data?.timings;
-      const dateInfo = response.data?.data?.date;
-
-      appState.prayers = prayerConfig.map((prayer) => ({
-        key: prayer.key,
-        label: prayer.label,
-        note: prayer.note,
-        time: sanitizePrayerTime(timings?.[prayer.key] || "--"),
-      }));
-
-      appState.hijriDate = `${dateInfo?.hijri?.weekday?.ar || ""} ${
-        dateInfo?.hijri?.date || ""
-      }`.trim() || "--";
-
+      appState.prayers = result.prayers;
+      appState.hijriDate = result.hijriDate;
       updateHeaderDates();
       renderSelectionSummary();
       updateStatusMessage("تم تحديث المواقيت بنجاح.");
@@ -294,34 +295,4 @@ function getPrayers(country, city) {
         appState.isLoading = false;
       }
     });
-}
-
-function sanitizePrayerTime(value) {
-  return value.split(" ")[0];
-}
-
-function getNextPrayer(prayers) {
-  const now = new Date();
-
-  for (const prayer of prayers) {
-    const prayerDate = buildPrayerDate(prayer.time, now);
-
-    if (prayerDate && prayerDate >= now) {
-      return prayer;
-    }
-  }
-
-  return null;
-}
-
-function buildPrayerDate(time, referenceDate) {
-  const [hours, minutes] = time.split(":").map(Number);
-
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-    return null;
-  }
-
-  const prayerDate = new Date(referenceDate);
-  prayerDate.setHours(hours, minutes, 0, 0);
-  return prayerDate;
 }
