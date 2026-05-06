@@ -3,6 +3,8 @@ const defaultSelection = {
   city: "Monufia",
 };
 
+const countriesDataPath = "/assets/data/countries.json";
+
 const prayerConfig = [
   { key: "Fajr", label: "الفجر", note: "بداية اليوم" },
   { key: "Sunrise", label: "الشروق", note: "شروق الشمس" },
@@ -21,6 +23,7 @@ const statusMessageElement = document.getElementById("status-message");
 const selectedCountryLabel = document.getElementById("selected-country-label");
 const selectedCityLabel = document.getElementById("selected-city-label");
 const nextPrayerLabel = document.getElementById("next-prayer-label");
+let countries = [];
 
 const today = new Date();
 const apiDate = `${String(today.getDate()).padStart(2, "0")}-${String(
@@ -44,13 +47,11 @@ const appState = {
 
 let latestRequestId = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
-  populateCountries();
-  syncLocationOptions(appState.selectedCountry, appState.selectedCity);
+document.addEventListener("DOMContentLoaded", async () => {
   updateHeaderDates();
   renderSelectionSummary();
   renderLoadingState();
-  getPrayers(appState.selectedCountry, appState.selectedCity);
+  await initializeApp();
 });
 
 countryInput.addEventListener("change", () => {
@@ -83,6 +84,35 @@ prayersContainer.addEventListener("click", (event) => {
     getPrayers(appState.selectedCountry, appState.selectedCity);
   }
 });
+
+async function initializeApp() {
+  try {
+    countries = await loadCountries();
+    populateCountries();
+    syncLocationOptions(appState.selectedCountry, appState.selectedCity);
+    getPrayers(appState.selectedCountry, appState.selectedCity);
+  } catch (error) {
+    countries = [];
+    countryInput.innerHTML = `<option value="">تعذر تحميل الدول</option>`;
+    cityInput.innerHTML = `<option value="">تعذر تحميل المناطق</option>`;
+    countryInput.setAttribute("disabled", "disabled");
+    cityInput.setAttribute("disabled", "disabled");
+    appState.errorMessage = "تعذر تحميل قائمة الدول والمناطق من الملف المحلي.";
+    updateStatusMessage("تعذر تحميل قائمة الدول. تأكد من تشغيل التطبيق من خادم محلي والمحاولة مرة أخرى.");
+    renderSelectionSummary();
+    renderErrorState();
+  }
+}
+
+async function loadCountries() {
+  const response = await fetch(countriesDataPath);
+
+  if (!response.ok) {
+    throw new Error(`Failed to load countries: ${response.status}`);
+  }
+
+  return response.json();
+}
 
 function populateCountries() {
   const options = [
