@@ -1,96 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
+<!--
+  Author: Mahmoud Maher
+  Purpose: Prayer times web app
+  Description: Displays prayer times based on selected country and region.
+-->
+
+<!doctype html>
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>مواقيت الصـلاة</title>
-    <!-- APPLICATION FAVICON -->
-    <link rel="shortcut icon" href="imgs/avatar.ico" type="image/x-icon" />
-    <!-- BOOTSTRAP -->
+    <title>مواقيت الصلاة</title>
+    <link
+      rel="shortcut icon"
+      href="/assets/imgs/avatar.ico"
+      type="image/x-icon"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
     />
-    <!-- AXIOS LIBRARY -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- CUSTOM CSS -->
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
   </head>
+
   <body>
-    <main class="container">
-      <h1 class="text-center pt-5">مواقيت الصلاة</h1>
-      <section id="selection" class="row justify-content-center">
-        <header class="col col-md-6">
-          <div class="w-100">
-            <label for="country" class="form-label">برجاء إختيار الدولة:</label
-            ><br />
-            <select id="country" class="w-100">
-              <option value="none">برجاء إختيار الدولة</option>
-              <!-- <option value="eg">مصر</option>
-              <option value="ksa">السعودية</option> -->
-            </select>
-          </div>
-          <div class="w-100">
-            <label for="location" class="form-label"
-              >برجاء إختيار المنطقة:</label
-            ><br />
-            <select id="location" class="w-100" disabled>
-              <option value="">توقيت المنوفية : تلقائي</option>
-              <!-- <option value="menofia">المنوفية</option>
-              <option value="cairo">القاهرة</option> -->
-            </select>
-          </div>
-        </header>
-      </section>
-      <section id="prayer-section" class="row justify-content-center">
-        <table class="col col-md-6 text-center">
-          <thead>
-            <tr>
-              <th scope="col">الصــــــــــلاة</th>
-              <th scope="col">الوقــــــــــت</th>
-            </tr>
-          </thead>
-          <tbody id="prayers">
-            <!-- <tr>
-              <td>الفجر</td>
-              <td>02:22</td>
-            </tr>
-            <tr>
-              <td>الظهر</td>
-              <td>01:00</td>
-            </tr>
-            <tr>
-              <td>العصر</td>
-              <td>03:30</td>
-            </tr>
-            <tr>
-              <td>العصر</td>
-              <td>03:30</td>
-            </tr>
-            <tr>
-              <td>العصر</td>
-              <td>03:30</td>
-            </tr>
-            <tr>
-              <td>العصر</td>
-              <td>03:30</td>
-            </tr> -->
-          </tbody>
-        </table>
-      </section>
-      <footer class="row justify-content-center">
-        <div class="col col-md-6 d-flex justify-content-between" id="footer">
-          <h1>
-            تم تنفيذ التطبيق بواسطة 
-            <!-- <span id="author">محمــود مــاهر</span> -->
-            <span id="author">&lt;/ CODE404 &gt;</span>
-          </h1>
-          <h1>تاريخ اليوم <span id="date">02/10/2024</span></h1>
+    <main class="app-shell container py-4 py-lg-5">
+      <section class="hero-panel">
+        <div class="hero-copy">
+          <span class="eyebrow">دليلك اليومي لمواقيت الصلاة</span>
+          <h1>مواقيت الصلاة</h1>
+          <p class="hero-text">
+            اختر الدولة والمنطقة ليظهر لك التوقيت اليومي بشكل واضح وسريع على
+            جميع الأجهزة.
+          </p>
         </div>
+        <div class="hero-meta">
+          <div class="meta-card">
+            <span class="meta-label">تاريخ اليوم</span>
+            <strong id="date">--</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">التاريخ الهجري</span>
+            <strong id="hijri-date">--</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <aside class="control-panel">
+          <div class="panel-heading">
+            <h2>حدد موقعك</h2>
+            <p>حدّث الاختيار لعرض المواقيت الدقيقة لمنطقتك.</p>
+          </div>
+
+          <div class="field-group">
+            <label for="country" class="form-label">الدولة</label>
+            <select id="country" class="form-select"></select>
+          </div>
+
+          <div class="field-group">
+            <label for="location" class="form-label">المنطقة / المدينة</label>
+            <select id="location" class="form-select" disabled></select>
+          </div>
+
+          <div id="status-message" class="status-message" aria-live="polite">
+            جارٍ تحديد التوقيت الافتراضي...
+          </div>
+
+          <div class="selection-summary" aria-label="ملخص الاختيار الحالي">
+            <div class="summary-item">
+              <span class="summary-label">الدولة الحالية</span>
+              <strong id="selected-country-label">--</strong>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">المنطقة الحالية</span>
+              <strong id="selected-city-label">--</strong>
+            </div>
+          </div>
+        </aside>
+
+        <section class="prayer-panel">
+          <div class="panel-heading panel-heading-inline">
+            <div>
+              <h2>جدول اليوم</h2>
+              <p>تعرّف على المواقيت بسهولة مع إبراز الصلاة القادمة.</p>
+            </div>
+            <div class="next-prayer-badge">
+              <span>الموعد القادم</span>
+              <strong id="next-prayer-label">--</strong>
+            </div>
+          </div>
+
+          <div id="prayers" class="prayer-list" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <footer class="app-footer">
+        <p class="m-0">
+          تم تنفيذ التطبيق بواسطة
+          <a
+            id="author"
+            href="https://github.com/mahmoudmaherofficial"
+            target="_blank"
+            rel="noreferrer"
+            >محمود ماهر</a
+          >
+        </p>
       </footer>
     </main>
+
+    <script src="/scripts/geo-service.js"></script>
+    <script src="/scripts/prayer-service.js"></script>
+    <script src="/scripts/script.js"></script>
   </body>
-  <script src="countries.js"></script>
-  <script src="script.js"></script>
 </html>
